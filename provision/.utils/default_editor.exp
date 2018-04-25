@@ -1,0 +1,12 @@
+# 기본 에디터 설정
+
+set timeout 10
+
+spawn update-alternatives --config editor
+sleep 3
+
+expect "type selection number:"
+send "3\r"
+sleep 1
+
+puts "\n---- 기본에디터가 3번(vim.basic)으로 변경되었습니다 -----"

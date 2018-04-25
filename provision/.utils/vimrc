@@ -1,0 +1,124 @@
+" Vundle
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+" vim용 추가 테마설치
+Plugin 'jpo/vim-railscasts-theme'
+Plugin 'nanotech/jellybeans.vim'
+
+" 상태바 플러그인, AirLine
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+" 참고문서>> http://bakyeono.net/post/2015-08-13-vim-tab-madness-translate.html
+" https://bluesh55.github.io/2016/10/09/vim-ide/ 중간쯤에..폰트설치방법나옴
+let g:airline_powerline_fonts=1
+let g:airline#extensions#tabline#enabled=1     "버퍼목록 켜기
+let g:airline#extensions#tabline#fnamemod=':t' "파일명만 출력
+nmap <Tab> :bnext<CR>
+nmap <S-Tab> :bprevious<CR>
+
+"CtrlP 프로젝트 파일찾기
+Plugin 'ctrlpvim/ctrlp.vim.git'
+let g:ctrlp_map='<s-f>'
+let g:ctrlp_custom_ignore={
+			\ 'dir':  '\.git$|log$|tmp$|svn$|hg$|backups$|html$|jobs$|logs$|temp$|test$|bin$|locale$|var$|res$|media$|pub$|shell$|blogs$|dev$',
+			\ 'file': '\v\.(exe|so|dll|swp|zip)$'
+			\ }
+let g:ctrlp_follow_symlinks=1
+
+"여러파일에서 찾기및 바꾸기, 지원: vimgrep, grep, ack, ag, pt, git grep, csearch
+Plugin 'dkprice/vim-easygrep'
+let g:EasyGrepCommand="grep" "사용할 grep프로그램. vimgrep is default, grep or ack
+let g:EasyGrepRecursive=1 "모든 하위디렉토리도 검색
+
+"대부분의 코드상의 문법에러체크및 하단상태바에 실시간 표시
+Plugin 'scrooloose/syntastic'
+let g:syntastic_php_checkers=['php', 'phpcs', 'phpmd'] "phpcs, phpmd는 composer로 설치해야 한다.
+let g:syntastic_aggregate_errors=1 "다수의 외부체커사용시, 각 체커들의 에러들을 함께 표시.
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" NERDTree 트리뷰
+Plugin 'scrooloose/nerdtree'
+let g:NERDTreeMouseMode=3 "마우스 한번클릭으로 폴더및 파일 열기
+let g:NERDTreeWinPos="right" "폴더 트리구조 오른쪽창에 표시
+"NERDTree창 토글
+silent! nmap <C-n> :NERDTreeToggle<CR>
+"NERDTree창만 오픈된채로 남아있다면, vi를 종료한다
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let g:NERDTreeQuitOnOpen=1 "파일을 열면, NERDTree창은 자동으로 닫기
+
+" PHP 유지보수환경 구축
+Plugin 'joonty/vdebug' "http://www.sromero.org/wiki/linux/servicios/php/vim_debug_basics
+let g:vdebug_options = {'ide_key': 'vim-xdebug'}
+let g:vdebug_options = {'break_on_open': 0}
+let g:vdebug_options = {'server': '127.0.0.1'}
+let g:vdebug_options = {'port': '9000'}
+Plugin 'tobyS/vmustache' " php 주석 도큐먼트에 필요한 라이브러리. PDV플러그인 필수요건
+Plugin 'SirVer/ultisnips' " PDV플러그인 선택요건
+Plugin 'tobyS/pdv' " php 도큐멘터: http://stackoverflow.com/questions/7603446/vim-insert-phpdoc-automatically
+let g:pdv_template_dir = $HOME."/.vim/bundle/pdv/templates_snip"
+nnoremap <buffer> doc :call pdv#DocumentWithSnip()<CR>
+Plugin 'Chiel92/vim-autoformat' "자동 코드 포매터
+"noremap <F3> :Autoformat<CR>
+"au BufWrite * :Autoformat
+"세팅참조:  https://github.com/Chiel92/vim-autoformat/issues/156
+let g:formatdef_php_cs_fixer = '$HOME."/.config/composer/vendor/bin/phpcspatch"'
+let g:formatters_php = ['php_cs_fixer']
+"let g:autoformat_verbosemode=1 "디버깅, :messages
+
+Plugin 'alvan/vim-php-manual' " 커서에 있는 키워드에 SHIFT-k 하면, 매뉴얼을 보여준다
+Plugin 'airblade/vim-gitgutter' "상태바에 추가, 삭제, 변경 내역이 표시된다. (+4 ~0 -0)
+Plugin 'tpope/vim-fugitive' "Git Wrapper
+Plugin 'ervandew/supertab.git' "슈퍼탭~ctag의 자동완성을 탭으로 해주는~
+let g:SuperTabDefaultCompletionType = "" "이 세팅으로 탭완성을 가능케해준다
+" http://blog.joncairns.com/2012/05/using-vim-as-a-php-ide/
+Plugin 'Shougo/neocomplete.vim.git' "현재버퍼내의 키워드들의 캐시를 관리하므로써 키워드자동완성을 지원한다.
+let g:neocomplete#enable_at_startup=1 "시작시, neocomplete를 활성화시킨다.
+Plugin 'shawncplus/phpcomplete.vim' "향상된 PHP omni-자동완성
+autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
+set completeopt=longest,menuone
+
+call vundle#end()            " required
+
+syntax on					 " 이게 빠지니까, 컬러링이 안됨!
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+set t_Co=256 " colorscheme 이전에 세팅되어야 한다고 함
+"colorscheme elflord
+"colorscheme railscasts
+"colorscheme jellybeans
+set number
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+"set pastetoggle=<F2> "붙여넣기 모드 토글
+set smartindent
+set hidden "다른 버퍼(파일)로 이동할때, 저장되지 않았다는 경고없이 바로 현재버퍼를 숨긴다
+set incsearch "점진적인 검색어 하이라이팅
+set hlsearch "검색어 하이라이팅
+set laststatus=2
+set fileencoding=utf-8
+set nowrap
+
