@@ -3,3 +3,9 @@
 ```sh
 docker pull parsemaker/ubuntu
 ```
+
+OR
+
+```sh
+docker run -it --rm parsemaker/ubuntu /bin/bash
+```
